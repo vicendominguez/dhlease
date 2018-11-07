@@ -1,0 +1,94 @@
+.Dd November 7, 2018
+.Dt DHLEASE 8
+.Os
+.Sh NAME
+.Nm dhlease
+.Nd "view dhcp leases"
+.Sh SYNOPSIS
+.Nm
+.Op Fl haxvd
+.Op Fl f Ar lease_file
+.Op Fl i Ar ip_addr
+.Op Fl c Ar client
+.Op Fl m Ar mac_addr
+.Sh DESCRIPTION
+The
+.Nm
+utility provides a semi-controllable way of showing and searching
+DHCP leases.
+.Nm
+expects a DHCP lease file syntax fully compatible with The Internet
+Software Consortium DHCP Server.
+.Pp
+If the
+.Fl f
+option is omitted,
+.Nm
+will assume that the location of the DHCP
+lease file is /var/db/dhcpd.leases.
+.Bl -tag -width indent
+.It Fl h
+Show basic usage along with a few examples.
+.It Fl f
+Points
+.Nm
+to an alternative DHCP lease file location given by
+.Va lease_file
+to use instead.
+.It Fl d
+Removes duplicates.  If more than one lease exists for a MAC address,
+the leases will be checked and removed so that only the most recent
+lease for any given MAC address will be shown.
+.It Fl i
+Search the DHCP leases for an IP-address given by
+.Va ip_addr .
+The address may be given as a full IP-address or part of.  For IPv6
+addresses, the search is case-insensitive.
+.It Fl c
+Search the DHCP leases for a client containing the name given by
+.Va client .
+You can supply the full client hostname or part of it.
+The search is case-insensitive.
+.It Fl m
+Search for DHCP leases for a MAC address given by
+.Va mac_addr .
+You can supply the full MAC address or part of it.  The search is
+case-insensitive.
+.It Fl a
+Display only active DHCP leases. Mutually exclusive with
+.Fl x .
+.It Fl x
+Display only expired DHCP leases. Mutually exclusive with
+.Fl a .
+.It Fl v
+Slightly more verbose.  Shows which lease file is being used.
+.Sh SEE ALSO
+.Xr dhcpd 8 ,
+.Xr dhcpd.leases 5 ,
+.Xr dhcpd.conf 5
+.Sh HISTORY
+The
+.Nm
+utility was written in October 2018 born out of personal needs.
+.Sh AUTHORS
+.An -nosplit
+.Nm
+was written by
+.An Klaus Pedersen <klaus@brightstorm.net>
+with help from Soren Schmidt <sos@FreeBSD.org>.
+.Pp
+This manual page was written by Klaus Pedersen <klaus@brightstorm.net>.
+.Sh BUGS
+If you find any, please report them. If possible, please show me a copy
+of your lease file or relevant parts hereof.  You are free to edit your
+lease file if you need to hide your real information, but please make sure
+that the content still shows the problem so I can fix it.
+.Sh NOTES
+dhlease does not implement the full set of DHCP lease information but
+has enough to warrant practical usage.  However, it is the intention to
+add and evolve the utility as need arise.
+.Pp
+dhlease was originally meant to be a a little private tool but the purpose
+quickly changed to make it available to everyone who might need it.
+.Pp
+Ideas/suggestions, bugreports, etc. are greatly appreciated.
