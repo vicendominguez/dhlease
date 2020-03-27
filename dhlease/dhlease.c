@@ -70,7 +70,7 @@ static const struct keywords {
         const char      *name;
         int             value;
 } keywords[] = {
-	{ "abandoned",		TOK_ABANDONED },
+	      { "abandoned",		      TOK_ABANDONED },
         { "client-hostname",    TOK_CLIENT_HOSTNAME },
         { "ends",               TOK_ENDS },
         { "ethernet",           TOK_ETHERNET },
@@ -210,13 +210,20 @@ static void remove_duplicates(void)
 		return;
 
 	TAILQ_FOREACH(p_cur, &head, entities) {
-		TAILQ_FOREACH(p_cur_sub, &head, entities) {
-			if (strcasecmp(p_cur->macaddr, p_cur_sub->macaddr) == 0) {
-				if (compare_time(p_cur->end, p_cur_sub->end) == -1) {
-					TAILQ_REMOVE(&head, p_cur, entities);
-				}
-			}
-		}
+    if (p_cur->macaddr) {
+		  TAILQ_FOREACH(p_cur_sub, &head, entities) {
+        if (p_cur_sub->macaddr) {
+			    if (strcasecmp(p_cur->macaddr, p_cur_sub->macaddr) == 0) {
+				    if (compare_time(p_cur->end, p_cur_sub->end) == -1) {
+					    TAILQ_REMOVE(&head, p_cur, entities);
+				    }
+			    }
+        }
+		  }
+    }
+    else {
+      TAILQ_REMOVE(&head, p_cur, entities);
+    }
 	}
 }
 
@@ -372,8 +379,9 @@ parse_lease_file(void)
 			/* Check if the lease is abandoned */
 			case TOK_ABANDONED:
 				tmp = peek_char();
-				if (tmp != CHAR_SEMICOLON)
-					error("%s: parse error: expected ';' after 'abandoned'\n", prog, buffer);
+// not working tmp is always \x10 insted of ;
+//				if (tmp != CHAR_SEMICOLON)
+//					error("%s: parse error: expected ';' after '%s'\n", prog, buffer);
 				lbuf->abandoned = 1;
 			default:
 				;
@@ -404,7 +412,7 @@ static void
 seek_char(const unsigned char chr)
 {
 	int c, located;
-	located = 0;	
+	located = 0;
 	do {
 		c = get_char();
 		if (c == chr) {
@@ -571,7 +579,7 @@ parse_client_hostname(void)
 	i = 0;
 	do {
 		c = get_char();
-	
+
 		if (c == -1)
 			error("%s: parse error: unexpected EOF at line %d, pos %d\n", prog, line, cpos);
 
@@ -602,7 +610,7 @@ parse_date_string(void)
 		error("%s: weird buffer\n", prog);
 
 	/* For a specific byte sequence, wipe the 2 first chars from the buffer */
-	if (isdigit(buffer[0]) && isspace(buffer[1]))	
+	if (isdigit(buffer[0]) && isspace(buffer[1]))
 		strncpy(datebuf, buffer + 2, strlen(buffer) - 2);
 
 	return string_to_time(datebuf);
@@ -640,7 +648,12 @@ get_token(int *count, int *found)
 		buffer[i++] = c;
 
 		if (c == '#') {
-			printf("goto eol!\n");
+			printf("comment char found! ");
+			do {
+				c = get_char();
+			}
+			while (c != '\n');
+			printf ("eol!\n");
 			continue;
 		}
 
@@ -658,7 +671,7 @@ get_token(int *count, int *found)
 
 	*count += 1;
 	*found = 1;
-	
+
 	return kwl;
 }
 

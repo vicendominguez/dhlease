@@ -18,6 +18,7 @@ Type man dhlease for usage and assistance.
 # Limitations
 Written on and for FreeBSD 11.2.
 Will port if there's general interest.
+Supporting FreeBSD 12.1 (@vicendominguez)
 
 # Special thanks
 To my good friend, Soren Schmidt <sos@freebsd.org>.
